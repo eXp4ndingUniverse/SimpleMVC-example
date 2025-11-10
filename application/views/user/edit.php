@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 use ItForFree\SimpleMVC\Config;
 
 $Url = Config::getObject('core.router.class');
@@ -10,20 +11,28 @@ $User = Config::getObject('core.user.class');
 
 <h2><?= $editAdminusersTitle ?>
     <span>
-        <?= $User->returnIfAllowed("admin/adminusers/delete", 
-            "<a href=" . $Url::link("admin/adminusers/delete&id=" . $_GET['id']) 
-            . ">[Удалить]</a>");?>
+        <?= $User->returnIfAllowed(
+            "admin/adminusers/delete",
+            "<a href=" . $Url::link("admin/adminusers/delete&id=" . $_GET['id'])
+                . ">[Удалить]</a>"
+        ); ?>
     </span>
 </h2>
 
-<form id="editUser" method="post" action="<?= $Url::link("admin/adminusers/edit&id=" . $_GET['id'])?>">
+<form id="editUser" method="post" action="<?= $Url::link("admin/adminusers/edit&id=" . $_GET['id']) ?>">
     <h5>Введите имя пользователя</h5>
     <input type="text" name="login" placeholder="логин пользователя" value="<?= $viewAdminusers->login ?>"><br>
     <h5>Введите пароль</h5>
-    <input type="text" name="pass" placeholder="новый пароль" value=""><br>
+    <input type="text" name="pass" placeholder="оставьте пустым, чтобы не менять пароль" value=""><br>
+    <small style="color: #666;">Оставьте поле пустым, если не хотите менять пароль</small><br><br>
     <h5>Введите e-mail</h5>
-    <input type="text" name="email"  placeholder="email" value="<?= $viewAdminusers->email ?>"><br>
-    
+    <input type="text" name="email" placeholder="email" value="<?= $viewAdminusers->email ?>"><br>
+
+    <h5>Введите роль пользователя</h5>
+    <select name="role">
+        <option value="admin">Администратор</option>
+        <option value="auth_user">Зарегистрированный пользователь</option>
+    </select><br>
     <input type="hidden" name="id" value="<?= $_GET['id']; ?>">
     <input type="submit" name="saveChanges" value="Сохранить">
     <input type="submit" name="cancel" value="Назад">
