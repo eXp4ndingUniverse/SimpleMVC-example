@@ -84,13 +84,6 @@ class AdminusersController extends \ItForFree\SimpleMVC\MVC\Controller
                     $newAdminusers->role = $_POST['role'];
                 }
 
-                // ДОБАВЛЕНО: Обработка пустого пароля
-                if (empty($_POST['pass'])) {
-                    // Получаем текущего пользователя чтобы сохранить старый пароль
-                    $currentUser = $Adminusers->getById($id);
-                    $newAdminusers->pass = $currentUser->pass;
-                }
-
                 $newAdminusers->update();
                 $this->redirect($Url::link("admin/adminusers/index&id=$id"));
             } elseif (!empty($_POST['cancel'])) {
