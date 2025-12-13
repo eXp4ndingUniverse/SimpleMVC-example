@@ -33,4 +33,3 @@ $User = Config::getObject('core.user.class');
 <?php else:?>
     <p> Список заметок пуст</p>
 <?php endif; ?>
-

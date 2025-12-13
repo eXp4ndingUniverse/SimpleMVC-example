@@ -1,29 +1,27 @@
 <?php
-
+// application/controllers/HomepageController.php
 namespace application\controllers;
 
-/**
- * Контроллер для домашней страницы
- */
+use application\models\Article;
+
 class HomepageController extends \ItForFree\SimpleMVC\MVC\Controller
 {
-    /**
-     * @var string Название страницы
-     */
-    public $homepageTitle = "Домашняя страница";
+    public function __construct()
+    {
+        parent::__construct();
+        $this->layoutPath = 'main.php';
+    }
     
-    /**
-     * @var string Пусть к файлу макета 
-     */
-    public string $layoutPath = 'main.php';
-      
-    /**
-     * Выводит на экран страницу "Домашняя страница"
-     */
     public function indexAction()
     {
-        $this->view->addVar('homepageTitle', $this->homepageTitle); // передаём переменную по view
+        // Получаем статьи с деталями (категории, подкатегории, авторы)
+        $articlesData = Article::getListWithDetails(10, null, null, "publicationDate DESC", true);
+        $articles = $articlesData['results'];
+        
+        // Передаем данные в представление
+        $this->view->addVar('homepageTitle', 'Последние статьи');
+        $this->view->addVar('articles', $articles);
+        
         $this->view->render('homepage/index.php');
     }
 }
-

@@ -45,4 +45,3 @@ $User = Config::getObject('core.user.class');
     </ul>
    </div>
 </nav>
-

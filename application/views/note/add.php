@@ -22,4 +22,4 @@
     </div>
     <input type="submit" class="btn btn-primary" name="saveNewNote" value="Сохранить">
     <input type="submit" class="btn" name="cancel" value="Назад">
-</form>    
+</form>
