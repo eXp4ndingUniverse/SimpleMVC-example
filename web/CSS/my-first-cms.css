@@ -1,0 +1,491 @@
+/* Стили для body and внешнего контейнера */
+	 
+body {
+  margin: 0;
+  color: #333;
+  background-color: #00a0b0;
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  line-height: 1.5em;
+}
+
+#container {
+  width: 960px;
+  background: #fff;
+  margin: 20px auto;
+  padding: 20px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+}
+
+
+/* Логотип и нижний колонтитул */
+
+#logo {
+  display: block;
+  width: 300px;
+  padding: 0 660px 20px 0;
+  border: none;
+  border-bottom: 1px solid #00a0b0;
+  margin-bottom: 40px;
+}
+
+#footer {
+  border-top: 1px solid #00a0b0;
+  margin-top: 40px;
+  padding: 20px 0 0 0;
+  font-size: .8em;
+}
+
+#loader-identity {
+    display : none;
+    float : right;
+}
+
+
+/* Заголвки */
+
+h1 {
+  color: #eb6841;
+  margin-bottom: 30px;
+  line-height: 1.2em;
+}
+
+h2, h2 a {
+  color: #edc951;
+}
+
+h2 a {
+  text-decoration: none;
+}
+
+h3.categoryDescription {
+  margin-top: -20px;
+  margin-bottom: 40px;
+}
+
+
+/* Заголовки статей */
+
+#headlines {
+  list-style: none;
+  padding-left: 0;
+  width: 75%;
+}
+
+#headlines li {
+  margin-bottom: 2em;
+}
+
+.pubDate {
+  font-size: .8em;
+  color: #eb6841;
+  text-transform: uppercase;
+}
+
+#headlines .pubDate {
+  display: inline-block;
+  width: 100px;
+  font-size: .5em;
+  vertical-align: middle;
+}
+
+#headlines.archive .pubDate {
+  width: 130px;
+}
+
+.summary {
+  padding-left: 100px;
+}
+
+#headlines.archive .summary {
+  padding-left: 130px;
+}
+
+.category {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 85% !important; 
+  color: #999;
+  display: block;
+  line-height: 2em;
+}
+
+.category a {
+  color: #999;
+  text-decoration: underline;
+}
+
+/* Стили для подкатегорий */
+
+.subcategory {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 85% !important;
+  color: #999;
+  display: block;
+  line-height: 2em;
+}
+
+.subcategory a {
+  color: #999;
+  text-decoration: underline;
+}
+
+.subcategory::before {
+  content: "Подкатегория: ";
+}
+
+/* Стили для авторов на главной странице */
+.authors {
+    font-size: 85% !important;
+    color: #666;
+    margin: 5px 0;
+    font-style: italic;
+}
+
+.authors a {
+    color: #666;
+    text-decoration: none;
+}
+
+.authors a:hover {
+    color: #eb6841;
+    text-decoration: underline;
+}
+
+
+/* Заголовок для страницы администратора */
+
+#adminHeader {
+  width: 940px;
+  padding: 0 10px;
+  border-bottom: 1px solid #00a0b0;
+  margin: -30px 0 40px 0;
+  font-size: 0.8em;
+}
+
+
+/* Стили для формы с цветным фоном, скругленными углами и тенью */
+
+form {
+  margin: 20px auto;
+  padding: 40px 20px;
+  overflow: auto;
+  background: #fff4cf;
+  border: 1px solid #666;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px; 
+  border-radius: 5px;
+  -moz-box-shadow: 0 0 .5em rgba(0, 0, 0, .8);
+  -webkit-box-shadow: 0 0 .5em rgba(0, 0, 0, .8);
+  box-shadow: 0 0 .5em rgba(0, 0, 0, .8);
+}
+
+
+/* Задаем для элементов формы согласованные поля, отступы, и высоту строки */
+
+form ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+form ul li {
+  margin: .9em 0 0 0;
+  padding: 0;
+}
+
+form * {
+  line-height: 1em;
+}
+
+
+/* Метки полей */
+
+label {
+  display: block;
+  float: left;
+  clear: left;
+  text-align: right;
+  width: 15%;
+  padding: .4em 0 0 0;
+  margin: .15em .5em 0 0;
+}
+
+
+/* Поля */
+
+input, select, textarea {
+  display: block;
+  margin: 0;
+  padding: .4em;
+  width: 80%;
+}
+
+input, textarea, .date {
+  border: 2px solid #666;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;   
+  border-radius: 5px;
+  background: #fff;
+}
+
+input {
+  font-size: .9em;
+}
+
+select {
+  padding: 0;
+  margin-bottom: 2.5em;
+  position: relative;
+  top: .7em;
+}
+
+textarea {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  font-size: .9em;
+  height: 5em;
+  line-height: 1.5em;
+}
+
+textarea#content {
+  font-family: "Courier New", courier, fixed;
+}
+
+
+/* Рамка вокруг поля с фокусом ввода */
+
+form *:focus {
+  border: 2px solid #7c412b;
+  outline: none;
+}
+
+
+/* Правильно заполненное поле имеет зеленый фон */
+
+input:valid, textarea:valid {
+  background: #efe;
+}
+
+
+/* Кнопки отправки */
+
+.buttons {
+  text-align: center;
+  margin: 40px 0 0 0;
+}
+
+input[type="submit"] {
+  display: inline;
+  margin: 0 20px;
+  width: 12em;
+  padding: 10px;
+  border: 2px solid #7c412b;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px; 
+  border-radius: 5px;
+  -moz-box-shadow: 0 0 .5em rgba(0, 0, 0, .8);
+  -webkit-box-shadow: 0 0 .5em rgba(0, 0, 0, .8);
+  box-shadow: 0 0 .5em rgba(0, 0, 0, .8);
+  color: #fff;
+  background: #ef7d50;
+  font-weight: bold;
+  -webkit-appearance: none;
+}
+
+input[type="submit"]:hover, input[type="submit"]:active {
+  cursor: pointer;
+  background: #fff;
+  color: #ef7d50;
+}
+
+input[type="submit"]:active {
+  background: #eee;
+  -moz-box-shadow: 0 0 .5em rgba(0, 0, 0, .8) inset;
+  -webkit-box-shadow: 0 0 .5em rgba(0, 0, 0, .8) inset;
+  box-shadow: 0 0 .5em rgba(0, 0, 0, .8) inset;
+}
+
+
+/* Таблицы */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+tr, th, td {
+  padding: 10px;
+  margin: 0;
+  text-align: left;
+}
+
+table, th {
+  border: 1px solid #00a0b0;
+}
+
+th {
+  border-left: none;
+  border-right: none;
+  background: #ef7d50;
+  color: #fff;
+  cursor: default;
+}
+
+tr:nth-child(odd) {
+  background: #fff4cf;
+}
+
+tr:nth-child(even) {
+  background: #fff;
+}
+
+tr:hover {
+  background: #ddd;
+  cursor: pointer;
+}
+
+
+/* Окна для вывода статуса и сообщений об ошибках */
+
+.statusMessage, .errorMessage {
+  font-size: .8em;
+  padding: .5em;
+  margin: 2em 0;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  -moz-box-shadow: 0 0 .5em rgba(0, 0, 0, .8);
+  -webkit-box-shadow: 0 0 .5em rgba(0, 0, 0, .8);
+  -box-shadow: 0 0 .5em rgba(0, 0, 0, .8);
+}
+
+.statusMessage {
+  background-color: #2b2;
+  border: 1px solid #080;
+  color: #fff;
+}
+
+.errorMessage {
+  background-color: #f22;
+  border: 1px solid #800;
+  color: #fff;
+}
+
+ul.ajax-load {
+    margin-left:  0px;
+    padding-left: 10px;
+}
+ul.ajax-load li {
+    display: inline; /* Отображать как строчный элемент */
+    margin-right: 5px; /* Отступ слева */
+    border: 1px solid #000; /* Рамка вокруг текста */
+    padding: 3px; /* Поля вокруг текста */
+    font-size: 12px;
+}
+
+/* Стили для checkbox */
+input[type="checkbox"] {
+    display: inline-block;
+    width: auto;
+    margin: 0;
+    padding: 0;
+    vertical-align: middle;
+}
+
+.checkbox-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 5px;
+}
+
+.checkbox-label {
+    display: inline;
+    float: none;
+    text-align: left;
+    width: auto;
+    margin: 0;
+    padding: 0;
+    font-weight: normal;
+}
+
+/* Специфичные стили для checkbox в формах */
+form input[type="checkbox"] {
+    width: auto;
+    margin: 0;
+    padding: 0;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* Переопределение стилей для метки checkbox */
+form li label[for="active"] {
+    float: none;
+    display: block;
+    text-align: left;
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+/* На главной странице - убрать отступ у summary */
+.summary {
+    padding-left: 0 !important;   /* УБРАТЬ отступ слева */
+    margin-top: 10px !important;
+    line-height: 1.6em !important;
+    font-size: 1em !important;
+}
+
+/* Для архива тоже убираем отступ */
+#headlines.archive .summary {
+    padding-left: 0 !important;   /* УБРАТЬ отступ */
+}
+
+/* В полной статье - убрать отступ у content */
+.content {
+    padding-left: 0 !important;   /* УБРАТЬ отступ слева */
+    margin-top: 20px !important;
+    line-height: 1.7em !important;
+    font-size: 1.1em !important;
+    text-align: justify !important;
+}
+
+/* Увеличение шрифта для названия статьи */
+h1 {
+    font-size: 2.7em; /* Увеличено с ~1.8-2em */
+    color: #eb6841;
+    margin-bottom: 15px; /* Немного уменьшил отступ */
+    line-height: 1.2em;
+    font-weight: bold;
+}
+
+/* Увеличение шрифта для даты публикации */
+.pubDate {
+    font-size: 1.2em; /* Было .8em */
+    color: #eb6841;
+    text-transform: uppercase;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+/* Увеличить дату на главной странице в списке статей */
+#headlines .pubDate {
+    display: inline-block;
+    width: 100px;
+    font-size: 0.9em; /* Было .5em */
+    vertical-align: middle;
+    font-weight: bold;
+}
+
+/* Для архива */
+#headlines.archive .pubDate {
+    width: 130px;
+    font-size: 0.9em; /* Было .5em */
+}
+
+/* Для даты в полном просмотре статьи (дополнительно) */
+.view-item .pubDate {
+    font-size: 1.2em;
+    margin-bottom: 15px;
+}
