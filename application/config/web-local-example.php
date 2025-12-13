@@ -5,7 +5,7 @@
 $config = [
     'core' => [ // подмассив используемый самим ядром фреймворка
         'db' => [
-            'dns' => 'mysql:host=localhost;dbname=simplemvc',
+            'dns' => 'mysql:host=localhost;dbname=simplemvc_cms',
             'username' => 'root',
             'password' => '12345'
         ],

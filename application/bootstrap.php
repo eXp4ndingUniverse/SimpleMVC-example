@@ -5,5 +5,3 @@
  */
 
 \ItForFree\SimpleAsset\SimpleAssetManager::$assetsPath = '/assets'; //инициализация пути добавления ассетов
-
-
