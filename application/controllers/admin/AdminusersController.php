@@ -4,12 +4,18 @@ namespace application\controllers\admin;
 
 use ItForFree\SimpleMVC\Config;
 use \application\models\UserModel;
+use application\assets\AdminAsset;
 
 /**
  * Администрирование пользователей
  */
 class AdminusersController extends \ItForFree\SimpleMVC\MVC\Controller
 {
+    public function __construct()
+    {
+        parent::__construct();
+        AdminAsset::add(); // подключаем стили админки
+    }
 
     public string $layoutPath = 'admin-main.php';
 

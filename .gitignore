@@ -12,3 +12,11 @@
 
 #игнорируем локальные конфигурационные файлы
 /application/config/*-local.php
+
+# IDE и редакторы
+.vscode/
+.vscodium/
+.idea/
+*.swp
+*.swo
+*~
