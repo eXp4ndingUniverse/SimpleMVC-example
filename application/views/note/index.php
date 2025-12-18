@@ -3,33 +3,56 @@ use ItForFree\SimpleMVC\Config;
 
 $User = Config::getObject('core.user.class');
 ?>
-<?php include('includes/admin-notes-nav.php'); ?>
 
-<h2>List notes</h2>
+<<?php
+use ItForFree\SimpleMVC\Router\WebRouter;
+?>
+<h2>Статьи</h2>
 
-<?php if (!empty($notes)): ?>
-<table class="table">
-    <thead>
-    <tr>
-      <th scope="col">Оглавление</th>
-      <th scope="col">Посвящается</th>
-      <th scope="col">Дата</th>
-      <th scope="col"></th>
-    </tr>
-     </thead>
-    <tbody>
-    <?php foreach($notes as $note): ?>
-    <tr>
-        <td> <?= "<a href=" . \ItForFree\SimpleMVC\Router\WebRouter::link('admin/notes/index&id=' 
-		. $note->id . ">{$note->title}</a>" ) ?> </td>
-        <td> <?= $note->content ?> </td>
-        <td> <?= $note->publicationDate ?> </td>
-    </tr>
-    <?php endforeach; ?>
-
-    </tbody>
-</table>
-
-<?php else:?>
-    <p> Список заметок пуст</p>
+<?php if (!empty($articles)): ?>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Заголовок</th>
+                <th>Категория</th>
+                <th>Дата публикации</th>
+                <th>Активна</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($articles as $article): ?>
+            <tr>
+                <td><?= $article->id ?></td>
+                <td>
+                    <a href="<?= WebRouter::link('note/view&id=' . $article->id) ?>">
+                        <?= htmlspecialchars($article->title) ?>
+                    </a>
+                </td>
+                <td>
+                    <?php if (!empty($article->categoryName)): ?>
+                        <?= htmlspecialchars($article->categoryName) ?>
+                    <?php endif; ?>
+                </td>
+                <td><?= date('d.m.Y', strtotime($article->publicationDate)) ?></td>
+                <td>
+                    <?php if ($article->active): ?>
+                        <span class="badge badge-success">Да</span>
+                    <?php else: ?>
+                        <span class="badge badge-danger">Нет</span>
+                    <?php endif; ?>
+                </td>
+                <td>
+                    <a href="<?= WebRouter::link('admin/notes/edit&id=' . $article->id) ?>" class="btn btn-sm btn-primary">Редактировать</a>
+                    <a href="<?= WebRouter::link('admin/notes/delete&id=' . $article->id) ?>" class="btn btn-sm btn-danger">Удалить</a>
+                </td>
+            </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+<?php else: ?>
+    <p>Статьи не найдены.</p>
 <?php endif; ?>
+
+<a href="<?= WebRouter::link('admin/notes/add') ?>" class="btn btn-success">Добавить статью</a>

@@ -177,8 +177,8 @@ class Article extends Model
         $this->authors = array();
         while ($row = $st->fetch()) {
             $this->authors[] = array(
-                'id' => $row['id'],        // Важно: должен быть ID
-                'login' => $row['login']   // и логин
+                'id' => $row['id'],
+                'login' => $row['login']
             );
         }
     }
@@ -188,39 +188,50 @@ class Article extends Model
      */
     public function saveAuthors(): void
     {
-        if (is_null($this->id)) return;
+        if (is_null($this->id)) {
+            return;
+        }
 
-        // Удаляем старых авторов
-        $sql = "DELETE FROM article_authors WHERE article_id = :articleId";
-        $st = $this->pdo->prepare($sql);
-        $st->bindValue(":articleId", $this->id, \PDO::PARAM_INT);
-        $st->execute();
-
-        // Добавляем новых авторов
-        if (!empty($this->authors) && is_array($this->authors)) {
-            $sql = "INSERT INTO article_authors (article_id, user_id) VALUES ";
-            $placeholders = array();
-            $values = array();
-
-            foreach ($this->authors as $authorId) {
-                $placeholders[] = "(?, ?)";
-                $values[] = $this->id;
-                $values[] = (int)$authorId;
-            }
-
-            $sql .= implode(", ", $placeholders);
+        try {
+            // Удаляем старых авторов
+            $sql = "DELETE FROM article_authors WHERE article_id = :articleId";
             $st = $this->pdo->prepare($sql);
-            $st->execute($values);
+            $st->bindValue(":articleId", $this->id, \PDO::PARAM_INT);
+            $st->execute();
+
+            // Добавляем новых авторов
+            if (!empty($this->authors) && is_array($this->authors)) {
+                $sql = "INSERT INTO article_authors (article_id, user_id) VALUES ";
+                $placeholders = array();
+                $values = array();
+
+                foreach ($this->authors as $authorId) {
+                    $placeholders[] = "(?, ?)";
+                    $values[] = $this->id;
+                    $values[] = (int)$authorId;
+                }
+
+                $sql .= implode(", ", $placeholders);
+                $st = $this->pdo->prepare($sql);
+                $st->execute($values);
+            }
+        } catch (\Exception $e) {
+            throw $e;
         }
     }
 
     /**
-     * Переопределяем метод save для сохранения авторов
+     * Сохраняет статью (автоматически выбирает insert или update)
      */
     public function save(): void
     {
-        parent::save();
-        $this->saveAuthors();
+        if (empty($this->id)) {
+            // Новая статья - используем insert
+            $this->insert();
+        } else {
+            // Существующая статья - используем update
+            $this->update();
+        }
     }
 
     /**
@@ -244,16 +255,18 @@ class Article extends Model
     /**
      * Получить ID авторов статьи
      */
-    public function getAuthorIds(): array
+    public function getAuthorIdsForArticle($articleId): array
     {
+        $sql = "SELECT user_id FROM article_authors WHERE article_id = :articleId";
+        $st = $this->pdo->prepare($sql);
+        $st->bindValue(":articleId", $articleId, \PDO::PARAM_INT);
+        $st->execute();
+
         $authorIds = array();
-        foreach ($this->authors as $author) {
-            if (is_array($author) && isset($author['id'])) {
-                $authorIds[] = $author['id'];
-            } elseif (is_numeric($author)) {
-                $authorIds[] = (int)$author;
-            }
+        while ($row = $st->fetch()) {
+            $authorIds[] = $row['user_id'];
         }
+
         return $authorIds;
     }
 
@@ -282,5 +295,161 @@ class Article extends Model
         }
 
         return null;
+    }
+
+    /**
+     * Вставка новой статьи в БД
+     */
+    public function insert(): void
+    {
+        // Преобразуем дату в правильный формат
+        if (!empty($this->publicationDate)) {
+            // Если это Unix timestamp (число)
+            if (is_numeric($this->publicationDate)) {
+                $publicationDate = date('Y-m-d', (int)$this->publicationDate);
+            }
+            // Если это строка даты
+            else {
+                $publicationDate = date('Y-m-d', strtotime($this->publicationDate));
+            }
+        } else {
+            $publicationDate = date('Y-m-d');
+        }
+
+        $sql = "INSERT INTO articles (publicationDate, title, categoryId, subcategoryId, summary, content, active) 
+        VALUES (:publicationDate, :title, :categoryId, :subcategoryId, :summary, :content, :active)";
+
+        $st = $this->pdo->prepare($sql);
+        $st->bindValue(":publicationDate", $publicationDate, \PDO::PARAM_STR);
+        $st->bindValue(":title", $this->title, \PDO::PARAM_STR);
+        $st->bindValue(":categoryId", $this->categoryId, \PDO::PARAM_INT);
+        $st->bindValue(":subcategoryId", $this->subcategoryId, \PDO::PARAM_INT);
+        $st->bindValue(":summary", $this->summary, \PDO::PARAM_STR);
+        $st->bindValue(":content", $this->content, \PDO::PARAM_STR);
+        $st->bindValue(":active", $this->active, \PDO::PARAM_INT);
+
+        $st->execute();
+        $this->id = $this->pdo->lastInsertId();
+
+        // Сохраняем авторов после получения ID
+        $this->saveAuthors();
+    }
+
+    /**
+     * Обновление статьи в БД
+     */
+    public function update(): void
+    {
+        if (empty($this->id)) {
+            throw new \Exception("Article::update(): Attempt to update an Article without ID.");
+        }
+
+        try {
+            // Преобразуем дату в правильный формат
+            if (!empty($this->publicationDate)) {
+                // Если это Unix timestamp (число)
+                if (is_numeric($this->publicationDate)) {
+                    $publicationDate = date('Y-m-d', (int)$this->publicationDate);
+                }
+                // Если это строка даты в формате 'Y-m-d\TH:i'
+                elseif (strpos($this->publicationDate, 'T') !== false) {
+                    $publicationDate = date('Y-m-d', strtotime($this->publicationDate));
+                }
+                // Если это уже правильный формат
+                else {
+                    $publicationDate = $this->publicationDate;
+                }
+            } else {
+                $publicationDate = date('Y-m-d');
+            }
+
+            $sql = "UPDATE articles SET 
+                publicationDate = :publicationDate,
+                title = :title,
+                categoryId = :categoryId,
+                subcategoryId = :subcategoryId,
+                summary = :summary,
+                content = :content,
+                active = :active
+                WHERE id = :id";
+
+            $st = $this->pdo->prepare($sql);
+
+            $summary = $this->summary ?? '';
+            $active = $this->active ?? 1;
+            $subcategoryId = $this->subcategoryId !== null ? $this->subcategoryId : null;
+
+            $st->bindValue(":publicationDate", $publicationDate, \PDO::PARAM_STR);
+            $st->bindValue(":title", $this->title, \PDO::PARAM_STR);
+            $st->bindValue(":categoryId", $this->categoryId, \PDO::PARAM_INT);
+
+            if ($subcategoryId === null) {
+                $st->bindValue(":subcategoryId", null, \PDO::PARAM_NULL);
+            } else {
+                $st->bindValue(":subcategoryId", $subcategoryId, \PDO::PARAM_INT);
+            }
+
+            $st->bindValue(":summary", $summary, \PDO::PARAM_STR);
+            $st->bindValue(":content", $this->content, \PDO::PARAM_STR);
+            $st->bindValue(":active", $active, \PDO::PARAM_INT);
+            $st->bindValue(":id", $this->id, \PDO::PARAM_INT);
+
+            $st->execute();
+            
+            // Сохраняем авторов
+            $this->saveAuthors();
+        } catch (\PDOException $e) {
+            throw $e;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Загружает данные из массива в свойства объекта
+     */
+    public function loadFromArray(array $data): self
+    {
+        if (isset($data['id'])) {
+            $this->id = (int) $data['id'];
+        }
+
+        if (isset($data['title'])) {
+            $this->title = $data['title'];
+        }
+
+        if (isset($data['content'])) {
+            $this->content = $data['content'];
+            // Если summary нет, создаем его из content
+            if (!isset($data['summary']) && empty($this->summary)) {
+                $this->summary = mb_substr($data['content'], 0, 200) . '...';
+            }
+        }
+
+        if (isset($data['publicationDate'])) {
+            $this->publicationDate = $data['publicationDate'];
+        }
+
+        if (isset($data['categoryId'])) {
+            $this->categoryId = (int) $data['categoryId'];
+        }
+
+        if (isset($data['subcategoryId'])) {
+            $this->subcategoryId = $data['subcategoryId'] !== null ? (int) $data['subcategoryId'] : null;
+        }
+
+        if (isset($data['active'])) {
+            $this->active = (int) $data['active'];
+        }
+
+        if (isset($data['summary'])) {
+            $this->summary = $data['summary'];
+        }
+
+        if (isset($data['authors'])) {
+            $this->authors = is_array($data['authors']) ? $data['authors'] : [$data['authors']];
+        }
+
+        return $this;
     }
 }

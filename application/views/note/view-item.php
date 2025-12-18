@@ -1,79 +1,83 @@
 <?php
-use ItForFree\SimpleMVC\Config;
 use ItForFree\SimpleMVC\Router\WebRouter;
-
-$User = Config::getObject('core.user.class');
 ?>
+<h2>Просмотр статьи</h2>
 
-<?php 
-// Включите навигацию если файл существует
-if (file_exists(__DIR__ . '/includes/admin-notes-nav.php')) {
-    include('includes/admin-notes-nav.php');
-}
-?>
-
-<h1><?= htmlspecialchars($article->title ?? '') ?>
-    <span>
-        <?php if ($User->returnIfAllowed("admin/notes/edit", true)): ?>
-            <a href="<?= WebRouter::link("admin/notes/edit&id=" . ($article->id ?? '')) ?>">[Редактировать]</a>
+<div class="card">
+    <div class="card-header">
+        <h3><?= htmlspecialchars($viewArticle->title ?? '') ?></h3>
+    </div>
+    <div class="card-body">
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <p><strong>ID:</strong> <?= $viewArticle->id ?? '' ?></p>
+                <p><strong>Дата публикации:</strong> 
+                    <?= isset($viewArticle->publicationDate) ? date('d.m.Y', strtotime($viewArticle->publicationDate)) : '' ?>
+                </p>
+                <p><strong>Статус:</strong> 
+                    <?php if (isset($viewArticle->active)): ?>
+                        <span class="badge <?= $viewArticle->active ? 'badge-success' : 'badge-danger' ?>">
+                            <?= $viewArticle->active ? 'Активна' : 'Неактивна' ?>
+                        </span>
+                    <?php endif; ?>
+                </p>
+            </div>
+            <div class="col-md-6">
+                <?php if (!empty($viewArticle->categoryName)): ?>
+                    <p><strong>Категория:</strong> <?= htmlspecialchars($viewArticle->categoryName) ?></p>
+                <?php endif; ?>
+                <?php if (!empty($viewArticle->subcategoryName)): ?>
+                    <p><strong>Подкатегория:</strong> <?= htmlspecialchars($viewArticle->subcategoryName) ?></p>
+                <?php endif; ?>
+            </div>
+        </div>
+        
+        <?php if (!empty($viewArticle->content)): ?>
+        <div class="mb-3">
+            <h5>Содержание:</h5>
+            <div class="border p-3 bg-light">
+                <?= nl2br(htmlspecialchars($viewArticle->content)) ?>
+            </div>
+        </div>
         <?php endif; ?>
         
-        <?php if ($User->returnIfAllowed("admin/notes/delete", true)): ?>
-            <a href="<?= WebRouter::link("admin/notes/delete&id=" . ($article->id ?? '')) ?>">[Удалить]</a>
+        <?php if (!empty($viewArticle->authors)): ?>
+            <div class="mb-3">
+                <h5>Авторы:</h5>
+                <ul class="list-group">
+                    <?php foreach ($viewArticle->authors as $author): ?>
+                        <li class="list-group-item">
+                            <?php if (is_array($author) && isset($author['id'])): ?>
+                                <a href="<?= WebRouter::link('user/view&id=' . $author['id']) ?>" target="_blank">
+                                    <?= htmlspecialchars($author['login'] ?? $author['name'] ?? 'Неизвестный автор') ?>
+                                </a>
+                            <?php elseif (is_object($author) && isset($author->id)): ?>
+                                <a href="<?= WebRouter::link('user/view&id=' . $author->id) ?>" target="_blank">
+                                    <?= htmlspecialchars($author->login ?? $author->name ?? 'Неизвестный автор') ?>
+                                </a>
+                            <?php else: ?>
+                                <?= htmlspecialchars($author) ?>
+                            <?php endif; ?>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
         <?php endif; ?>
-    </span>
-</h1>
-
-<!-- Дата публикации -->
-<p class="pubDate"><?= date('j F Y', strtotime($article->publicationDate ?? '')) ?></p>
-
-<!-- Категория -->
-<?php if (!empty($article->categoryName)): ?>
-    <p class="category">
-        in <a href="<?= WebRouter::link('category/view&id=' . ($article->categoryId ?? '')) ?>">
-            <?= htmlspecialchars($article->categoryName) ?>
-        </a>
-    </p>
-<?php endif; ?>
-
-<!-- Подкатегория -->
-<?php if (!empty($article->subcategoryName)): ?>
-    <p class="subcategory">
-        Подкатегория: 
-        <a href="<?= WebRouter::link('subcategory/view&id=' . ($article->subcategoryId ?? '')) ?>">
-            <?= htmlspecialchars($article->subcategoryName) ?>
-        </a>
-    </p>
-<?php endif; ?>
-
-<?php if (!empty($article->authors)): ?>
-    <p class="authors">
-        Authors: 
-        <?php 
-        $authorLinks = [];
-        foreach ($article->authors as $author) {
-            if (is_array($author) && isset($author['id']) && isset($author['login'])) {
-                $authorLinks[] = '<a href="' . WebRouter::link('user/view&id=' . $author['id']) . '">' . 
-                                 htmlspecialchars($author['login']) . '</a>';
-            } elseif (is_object($author) && isset($author->id) && isset($author->login)) {
-                $authorLinks[] = '<a href="' . WebRouter::link('user/view&id=' . $author->id) . '">' . 
-                                 htmlspecialchars($author->login) . '</a>';
-            }
-        }
-        echo implode(', ', $authorLinks);
-        ?>
-    </p>
-<?php endif; ?>
-
-<!-- Краткое описание -->
-<?php if (!empty($article->summary)): ?>
-    <p class="summary"><?= htmlspecialchars($article->summary) ?></p>
-<?php endif; ?>
-
-<!-- Содержание -->
-<div class="content">
-    <?= nl2br(htmlspecialchars($article->content ?? '')) ?>
+    </div>
+    <div class="card-footer">
+        <?php if (isset($viewArticle->id)): ?>
+            <a href="<?= WebRouter::link('admin/notes/edit&id=' . $viewArticle->id) ?>" class="btn btn-primary">
+                Редактировать
+            </a>
+            <a href="<?= WebRouter::link('admin/notes/delete&id=' . $viewArticle->id) ?>" class="btn btn-danger">
+                Удалить
+            </a>
+            <a href="<?= WebRouter::link('admin/notes/index') ?>" class="btn btn-secondary">
+                К списку статей
+            </a>
+            <a href="<?= WebRouter::link('note/view&id=' . $viewArticle->id) ?>" class="btn btn-info" target="_blank">
+                Просмотреть на сайте
+            </a>
+        <?php endif; ?>
+    </div>
 </div>
-
-<!-- Ссылка на главную -->
-<p><a href="<?= WebRouter::link('homepage/index') ?>">← Вернуться на главную</a></p>
